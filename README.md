@@ -2,7 +2,7 @@
 
 ![Java](https://img.shields.io/badge/Java-21-blue.svg)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.4-brightgreen.svg)
-![AWS](https://img.shields.io/badge/AWS-ECS%20|%20ECR-orange.svg|%20S3%20.svg)
+![AWS](https://img.shields.io/badge/AWS-ECS%20|%20S3%20|%20ECR-orange.svg)
 ![Terraform](https://img.shields.io/badge/Terraform-IaC-blueviolet.svg)
 ![CD](https://img.shields.io/badge/CI/CD-GitHub%20Actions-lightgrey.svg)
 
