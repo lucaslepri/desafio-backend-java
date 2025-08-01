@@ -37,27 +37,27 @@ Contexto
 
 Iterações do sistema com usuários e sistemas externos.
 
-![Contexto](docs/images/contexto.png)
+![Contexto](/docs/1.Contexto%20do%20Sistema%20de%20Vendas.png)
 
 Containers
 
 Este diagrama mostra os blocos de construção da solução dentro da AWS, os microserviços, o banco de dados e os serviços da AWS utilizados.
 
-![Containers](docs/images/containers.png)
+![Containers](/docs/2.Containers%20do%20Sistema%20de%20Vendas.png)
 
 ### Diagramas de Sequência
 
 **Cenário 1: Criação de Cliente com Validação de CPF na Receita Federal(Caminho Feliz)**
-![Sequência - Criação de Cliente](docs/images/caminho-feliz-cpf-receita.png)
+![Sequência - Criação de Cliente](/docs/5caminho-feliz-cpf-receita.png)
 
 **Cenário 2: Mantém a criação de clientes mesmo quando o provedor Receita Federal está indisponível. Circuit Breaker**
 O cadastro continua, mas com um status `PENDENTE_VALIDACAO_RECEITA`.
-![Sequência - Circuit Breaker Aberto](docs/images/caminho-feliz-cpf-receita-circuit-aberto.png)
+![Sequência - Circuit Breaker Aberto](/docs/8.caminho-feliz-cpf-receita-circuit-aberto.png)
 
 **Cenário 3: Feature Toggle para Provedor de CPF**
 Semelhante ao cenário 1, mas com o uso de um provedor de validaão alternativo (`JatoCpfServicesAdapter`).
 A virada entre provedores pode ser controlada LIVE com Feature Toggle.
-![Sequência - Feature Toggle](docs/images/caminho-feliz-cpf-jatocpf.puml)
+![Sequência - Feature Toggle](/docs/7.caminho-feliz-cpf-jatocpf.png)
 
 Exemplo de JSON de auditoria gerado pelo `ms-auditoria`:
 ```json
