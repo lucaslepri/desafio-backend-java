@@ -45,6 +45,10 @@ Este diagrama mostra os blocos de construção da solução dentro da AWS, os mi
 
 ![Containers](/docs/2.Containers%20do%20Sistema%20de%20Vendas.png)
 
+![ms-proposals](/docs/3.Componentes%20do%20ms-proposals.png)
+
+![ms-auditoria](/docs/4.Componentes%20do%20ms-auditoria.png)
+
 ### Diagramas de Sequência
 
 **Cenário 1: Criação de Cliente com Validação de CPF na Receita Federal(Caminho Feliz)**
