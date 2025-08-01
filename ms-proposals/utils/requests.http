@@ -16,7 +16,6 @@ Content-Type: application/json
 # @name refresh
 POST {{baseUrl}}/actuator/refresh
 
-
 ###
 # @name getCustomers
 GET {{baseUrl}}/api/v1/customers?page=0&size=10

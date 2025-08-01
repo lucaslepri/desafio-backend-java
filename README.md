@@ -20,6 +20,7 @@ Para isto, idealizei um sistema de gerenciamento de propostas de financiamento d
   - [Contexto](#contexto)
   - [Containers](#containers)
   - [Diagramas de Sequência](#diagramas-de-sequência)
+- [Observabilidade](#observabilidade)
 - [Tecnologias e Padrões](#tecnologias-e-padrões)
 - [Reflexões, melhorias e gaps](#reflexões-melhorias-e-gaps)
 - [Links](#links)
@@ -115,6 +116,14 @@ Exemplo de JSON de auditoria gerado pelo `ms-auditoria`:
 -   **Resiliência**: **Circuit Breaker** no `ReceitaFederalAdapter` para manter o cadastro operacional em caso de falha no serivço da Receita.
 -   **Segurança**: Autenticação e autorização (ambas ad-hoc - realista) com roles.
 -   **Feature Toggle**: Há uma flag de configuração (`cpf.validator.provider`) gerenciada via **AWS Parameter Store** para trocar entre diferentes implementações da `CpfValidationStrategy` em hot.
+
+### Observabilidade
+
+![Contexto](/docs/trace1.png)
+![Contexto](/docs/trace2.png)
+![Contexto](/docs/trace3.png)
+![Contexto](/docs/trace4.png)
+![Contexto](/docs/prometheus.png)
 
 ## Tecnologias e Padrões
 
