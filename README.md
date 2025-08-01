@@ -118,12 +118,12 @@ Exemplo de JSON de auditoria gerado pelo `ms-auditoria`:
 -   **Feature Toggle**: Há uma flag de configuração (`cpf.validator.provider`) gerenciada via **AWS Parameter Store** para trocar entre diferentes implementações da `CpfValidationStrategy` em hot.
 
 ### Observabilidade
-
-![Contexto](/docs/trace1.png)
-![Contexto](/docs/trace2.png)
-![Contexto](/docs/trace3.png)
-![Contexto](/docs/trace4.png)
-![Contexto](/docs/prometheus.png)
+<br>
+![Contexto](/imgs/trace1.png)<br>
+![Contexto](/imgs/trace2.png)<br>
+![Contexto](/imgs/trace3.png)<br>
+![Contexto](/imgs/trace4.png)<br>
+![Contexto](/imgs/prometheus.png)<br>
 
 ## Tecnologias e Padrões
 
