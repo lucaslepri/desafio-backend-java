@@ -1,5 +1,5 @@
-@baseUrl = http://127.0.0.1:8080/proposals
-#@baseUrl = http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals
+baseUrl = http://127.0.0.1:8080/proposals
+@baseUrl = http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals
 @nonExistentId = 999999
 
 ###
