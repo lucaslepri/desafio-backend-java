@@ -119,13 +119,12 @@ Exemplo de JSON de auditoria gerado pelo `ms-auditoria`:
 ### Observabilidade
 
 Trace circuit breaker
-![Contexto](/imgs/trace1.png)<br>
+![trace](/imgs/trace1.png)<br>
 Detalhes do X-Ray
-![Contexto](/imgs/trace2.png)<br><br>
-Detalhes do X-Ray
-![Contexto](/imgs/trace3.png)<br><br>
+![trace](/imgs/trace2.png)<br><br>
+![trace](/imgs/trace3.png)<br><br>
 Quantidade de clientes criados
-![Contexto](/imgs/prometheus.png)<br><br>
+![metrics](/imgs/prometheus.png)<br><br>
 
 ## Tecnologias e Padrões
 
