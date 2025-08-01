@@ -20,7 +20,6 @@ Para isto, idealizei um sistema de gerenciamento de propostas de financiamento d
   - [Contexto](#contexto)
   - [Containers](#containers)
   - [Diagramas de Sequência](#diagramas-de-sequência)
-- [Diferenciais Implementados](#diferenciais-implementados)
 - [Tecnologias e Padrões](#tecnologias-e-padrões)
 - [Reflexões, melhorias e gaps](#reflexões-melhorias-e-gaps)
 - [Links](#links)
