@@ -1,0 +1,44 @@
+@startuml Containers do Sistema de Vendas
+
+' Includes
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v16.0/dist
+!includeurl AWSPuml/AWSCommon.puml
+!includeurl AWSPuml/NetworkingContentDelivery/all.puml
+!includeurl AWSPuml/Database/all.puml
+!includeurl AWSPuml/Storage/all.puml
+
+LAYOUT_WITH_LEGEND()
+title Diagrama de Containers
+
+Person(user, "Usuário", "Agente/Analista/Admin")
+System_Ext(receita_federal, "API da Receita Federal", "Validação de CPF.")
+SystemDb_Ext(mongo, "MongoDB Atlas", "Database-as-a-Service", "Armazena os dados de clientes, propostas e usuários.", $sprite="Database/DocumentDB")
+
+System_Boundary(c1, "Sistema de Vendas\n(Hospedado na AWS us-west-2)") {
+
+    Container(alb, "Application Load Balancer", "AWS ALB", "Ponto de entrada único para as APIs, roteia o tráfego.", $sprite="NetworkingContentDelivery/ElasticLoadBalancingApplicationLoadBalancer")
+    
+    Container(ms_proposals, "ms-proposals", "Java 21 / Spring Boot 3", "Serviço principal para CRUDs de Clientes e Propostas. Expõe a API REST.")
+    
+    Container(ms_auditoria, "ms-auditoria", "Java 21 / Spring Boot 3", "Serviço que ouve mudanças no banco e exporta os dados para o S3.")
+    
+    Container(audit_bucket, "Bucket de Auditoria", "AWS S3", "Armazena os arquivos JSON com os dados de auditoria das mudanças no banco.", $sprite="Storage/SimpleStorageServiceBucket")
+}
+
+Rel_R(user, alb, "1. Acessa a API", "HTTPS")
+Rel_R(alb, ms_proposals, "2. Roteia requisições", "HTTP")
+Rel_R(ms_proposals, receita_federal, "3. Valida CPF", "HTTPS")
+Rel_R(ms_proposals, mongo, "4. Lê e Escreve dados", "Mongo Wire Protocol")
+
+Rel_D(ms_auditoria, mongo, "A. Ouve MongoDB Change Streams", "Mongo Wire Protocol")
+Rel_D(ms_auditoria, audit_bucket, "B. Escreve arquivos de auditoria (.json)", "HTTPS/AWS API")
+
+note right of ms_proposals
+  As escritas (passo 4) no MongoDB
+  geram eventos que são
+  capturados pelo **ms-auditoria**
+  (passo A).
+end note
+
+@enduml

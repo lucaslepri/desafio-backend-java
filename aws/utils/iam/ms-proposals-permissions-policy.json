@@ -1,0 +1,24 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": [
+                "arn:aws:secretsmanager:us-west-2:506150725481:secret:desafio-itau/jwt-key-*",
+                "arn:aws:secretsmanager:us-west-2:506150725481:secret:desafio-itau/mongo-connection-uri-*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParametersByPath",
+                "ssm:GetParameters",
+                "ssm:GetParameter"
+            ],
+            "Resource": "arn:aws:ssm:us-west-2:506150725481:parameter/config/ms-proposals/*"
+        }
+    ]
+}

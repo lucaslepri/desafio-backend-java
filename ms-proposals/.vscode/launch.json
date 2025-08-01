@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "VendasApplication",
+            "request": "launch",
+            "mainClass": "com.itau.desafio.vendas.VendasApplication",
+            "projectName": "ms-proposals",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

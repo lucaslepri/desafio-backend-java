@@ -1,0 +1,66 @@
+{
+    "family": "ms-proposals-task-def",
+    "taskRoleArn": "arn:aws:iam::506150725481:role/msProposalsAppTaskRole",
+    "executionRoleArn": "arn:aws:iam::506150725481:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "512",
+    "memory": "2048",
+    "containerDefinitions": [
+        {
+            "name": "ms-proposals-container",
+            "image": "506150725481.dkr.ecr.us-west-2.amazonaws.com/desafio/ms-proposals:latest",
+            "cpu": 384,
+            "memoryReservation": 1792,
+            "portMappings": [
+                {
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "wget --spider -q -T 15 http://localhost:8080/proposals/actuator/health || exit 1"
+                ],
+                "interval": 15,
+                "timeout": 5,
+                "retries": 3,
+                "startPeriod": 60
+            },
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/ms-proposals",
+                    "awslogs-region": "us-west-2",
+                    "awslogs-stream-prefix": "app"
+                }
+            }
+        },
+        {
+            "name": "xray-daemon",
+            "image": "public.ecr.aws/xray/aws-xray-daemon:3.x",
+            "cpu": 128,
+            "memoryReservation": 256,
+            "portMappings": [
+                {
+                    "containerPort": 2000,
+                    "protocol": "udp"
+                }
+            ],
+            "essential": true,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/ms-proposals",
+                    "awslogs-region": "us-west-2",
+                    "awslogs-stream-prefix": "xray-daemon"
+                }
+            }
+        }
+    ]
+}

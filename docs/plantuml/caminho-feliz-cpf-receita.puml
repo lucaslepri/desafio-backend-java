@@ -1,0 +1,91 @@
+@startuml
+!theme plain
+title "Fluxo de Sequência: Criação de Cliente | Feature de validação de CPF na Receita Federal"
+
+actor "Usuário" as User
+participant "CustomerController\n<<Adapter (In)>>" as Controller
+participant "CreateCustomerUseCase\n<<Application>>" as UseCase
+participant "CustomerRepositoryPort\n<<Domain Port (Out)>>" as CustomerRepoPort
+participant "ReceitaFederalAdapter\n<<Adapter (Out)>>" as ReceitaAdapter
+database "API Externa\n(Receita Federal)" as ExternalApi
+participant "CustomerRepositoryAdapter\n<<Adapter (Out)>>" as CustomerRepoAdapter
+database "MongoDB" as DB
+
+skinparam sequence {
+    ParticipantBorderColor #555555
+    ParticipantBackgroundColor #FAFAFA
+    ActorBorderColor #555555
+    ArrowColor #333333
+}
+
+autonumber "<b>[00]"
+
+User -> Controller: POST /api/v1/customers\n(CreateCustomerRequest)
+activate Controller
+
+Controller -> UseCase: createCustomer(dto)
+activate UseCase
+
+UseCase -> CustomerRepoPort: existsByCpf(cpf)
+activate CustomerRepoPort
+CustomerRepoPort -> CustomerRepoAdapter: existsByCpf(cpf)
+activate CustomerRepoAdapter
+CustomerRepoAdapter -> DB: count({cpf: "..."})
+DB --> CustomerRepoAdapter: 0
+CustomerRepoAdapter --> CustomerRepoPort: false
+deactivate CustomerRepoAdapter
+CustomerRepoPort --> UseCase
+deactivate CustomerRepoPort
+
+note right of UseCase: CPF é único.
+
+UseCase -> ReceitaAdapter: validateCpf(cpf)
+activate ReceitaAdapter
+
+note right of UseCase
+  O UseCase depende da abstração 'CpfValidationStrategy' (Porta).
+  O Spring injeta a implementação 'ReceitaFederalAdapter', 
+  selecionada via 'FeatureToggle'.
+end note
+
+group Circuit Breaker [ESTADO = FECHADO]
+    ReceitaAdapter -> ExternalApi: GET /check/{cpf}
+    activate ExternalApi
+    
+    note right of ReceitaAdapter
+      Chamada HTTP realizada via RestTemplate
+      e instrumentada para AWS X-Ray.
+    end note
+    
+    ExternalApi --> ReceitaAdapter: HTTP 200 OK\n{ "status": "CPF_ATIVO" }
+    deactivate ExternalApi
+end
+
+ReceitaAdapter --> UseCase: CpfStatus.CPF_ATIVO
+deactivate ReceitaAdapter
+
+note right of UseCase: Validação externa OK.\nCriando a entidade de domínio.
+
+UseCase -> CustomerRepoPort: save(customer)
+activate CustomerRepoPort
+CustomerRepoPort -> CustomerRepoAdapter: save(customer)
+activate CustomerRepoAdapter
+CustomerRepoAdapter -> DB: insert(customerDocument)
+DB --> CustomerRepoAdapter: (documento salvo)
+CustomerRepoAdapter --> CustomerRepoPort: Customer (com ID e timestamps de auditoria)
+deactivate CustomerRepoAdapter
+CustomerRepoPort --> UseCase: Customer
+deactivate CustomerRepoPort
+
+note right of UseCase
+  Incrementa métricas
+  via MeterRegistry
+end note
+
+UseCase --> Controller: Customer
+deactivate UseCase
+
+Controller --> User: HTTP 201 Created\n(CustomerResponse - com HATEOAS)
+deactivate Controller
+
+@enduml

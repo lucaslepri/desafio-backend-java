@@ -1,0 +1,37 @@
+info:
+  app:
+    name: API de Financiamentos - Auditoria de Dados - Desafio Itaú
+    description: Microserviço para auditoria de mudanças no banco de dados
+    version: 1.0.0
+
+server:
+  port: 8080
+  servlet:
+    context-path: /audit
+
+spring:
+  profiles:
+    active: dev
+  data:
+    mongodb:
+      uri: ${MONGO_DB_URI}
+
+audit:
+  s3:
+    bucket-name: ${S3_BUCKET_NAME:s3-bucket-desafio-itau-1}
+    region: us-west-2
+
+changestream:
+  listener:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true

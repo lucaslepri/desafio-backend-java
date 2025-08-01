@@ -1,0 +1,102 @@
+info:
+  app:
+    name: API de Financiamentos - Desafio Itaú
+    description: Uma API para gerenciamento de clientes e propostas de financiamento de veículos.
+    version: 1.0.0
+
+server:
+  port: 8080
+  servlet:
+    context-path: /proposals
+
+spring:
+  profiles:
+    active: dev
+  threads:
+    virtual:
+      enabled: yes
+  data:
+    mongodb:
+      uri: ${MONGO_DB_URI}
+      database: ${MONGO_DB_DATABASE:vendas-proposals}
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=10m,recordStats
+    cache-names: customers
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY:}
+      expiration: 3600000
+
+aws:
+  xray:
+    enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      receitaFederalService:
+        registerHealthIndicator: true
+        sliding-window-type: count-based
+        sliding-window-size: 3
+        minimum-number-of-calls: 3
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 1
+        ignore-exceptions:
+          - com.itau.desafio.vendas.domain.exceptions.BusinessRuleException
+        record-exceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+          - java.io.IOException
+          - com.itau.desafio.vendas.domain.exceptions.ExternalServiceUnavailableException 
+          - com.itau.desafio.vendas.domain.exceptions.ExternalServiceContractException
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+      show-details: always
+    caffeine:
+      enabled: true
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics,mappings,beans,circuitbreakers,caches,caffeine,refresh
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+cpf:
+  validator:
+    provider: ${CPF_VALIDATOR_PROVIDER:receitaFederal}
+
+services:
+  receita-federal:
+    url: ${services.receita-federal.url:http://localhost:8081/api/v1/cpf-validator/check}
+    timeout: 5000
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  data:
+    mongodb:
+      uri: ${MONGO_DB_URI:}
+
+application:
+  security:
+    jwt:
+      secret-key: NGRmYjdhYjYxYzM4NDliMzkzMjliM2FhZGFkYmEyYjU5YmU5NjNjYmY4YTA3MWY1N2NiZDAyNGRmYjdhYjYxYzM4=
+
+services:
+  receita-federal:
+    url: http://localhost:8081/api/v1/cpf-validator/check

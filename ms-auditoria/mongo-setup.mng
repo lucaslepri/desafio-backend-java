@@ -1,0 +1,24 @@
+Comando a ser executado no MongoSH antes de liberar para produção:
+(Habilita pré e pós-imagens para todas as coleções)
+
+db.getCollectionNames().forEach(function(collName) {
+    if (collName.startsWith('system.')) {
+        print("Ignorando coleção de sistema: " + collName);
+        return;
+    }
+
+    print("Habilitando pré e pós-imagens para a coleção: " + collName);
+    try {
+        var result = db.runCommand({
+            collMod: collName,
+            changeStreamPreAndPostImages: { enabled: true }
+        });
+        if (result.ok) {
+            print(" -> Sucesso para: " + collName);
+        } else {
+            print(" -> Falha para: " + collName + ". Resposta: " + tojson(result));
+        }
+    } catch (e) {
+        print(" -> Erro ao modificar " + collName + ": " + e.message);
+    }
+});

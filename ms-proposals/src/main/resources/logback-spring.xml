@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name" />
+
+    <appender name="CONSOLE_PLAIN" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}
+                [${springAppName:-},traceId=%X{traceId:-},spanId=%X{spanId:-}]
+                %-5level [%thread] %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_TXT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${springAppName:-ms-proposals}.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}
+                [${springAppName:-},traceId=%X{traceId:-},spanId=%X{spanId:-}]
+                %-5level [%thread] %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/${springAppName:-ms-proposals}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <version>[ignore]</version>
+                <level>level</level>
+                <thread>thread</thread>
+                <level_value>[ignore]</level_value>
+                <logger>logger</logger>
+                <message>message</message>
+                <stack_trace>stacktrace</stack_trace>
+            </fieldNames>
+            <mdc>
+                <includeMdcKeyName>traceId</includeMdcKeyName>
+                <includeMdcKeyName>spanId</includeMdcKeyName>
+            </mdc>
+            <customFields>{"application":"${springAppName:-}"}</customFields>
+        </encoder>
+    </appender>
+
+
+    <springProfile name="prod | production">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_JSON" />
+        </root>
+        <logger name="org.springframework" level="WARN" />
+        <logger name="com.amazonaws" level="WARN" />
+        <logger name="io.github.resilience4j" level="WARN" />
+        <logger name="com.itau.desafio.vendas" level="INFO" />
+    </springProfile>
+
+    <springProfile name="dev | default">
+        <root level="TRACE">
+            <appender-ref ref="FILE_TXT" />
+        </root>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_PLAIN" />
+        </root>
+        <logger name="org.springframework" level="WARN" />
+        <logger name="com.amazonaws" level="INFO" />
+        <logger name="com.itau.desafio.vendas" level="WARN" />
+    </springProfile>
+</configuration>

@@ -1,0 +1,64 @@
+{
+    "family": "ms-audit-task-def",
+    "taskRoleArn": "arn:aws:iam::506150725481:role/ms-audit-ecs-task-role",
+    "executionRoleArn": "arn:aws:iam::506150725481:role/ms-audit-ecs-execution-role",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "1024",
+    "containerDefinitions": [
+        {
+            "name": "ms-audit-container",
+            "cpu": 128,
+            "memoryReservation": 768,
+            "portMappings": [
+                {
+                    "containerPort": 8080,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "wget --spider -q -T 15 http://localhost:8080/audit/actuator/health || exit 1"
+                ],
+                "interval": 15,
+                "timeout": 5,
+                "retries": 3,
+                "startPeriod": 60
+            },
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/ms-audit",
+                    "awslogs-region": "us-west-2",
+                    "awslogs-stream-prefix": "app"
+                }
+            }
+        },
+        {
+            "name": "xray-daemon",
+            "image": "public.ecr.aws/xray/aws-xray-daemon:3.x",
+            "cpu": 128,
+            "memoryReservation": 256,
+            "portMappings": [
+                {
+                    "containerPort": 2000,
+                    "protocol": "udp"
+                }
+            ],
+            "essential": true,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/ms-audit",
+                    "awslogs-region": "us-west-2",
+                    "awslogs-stream-prefix": "xray-daemon"
+                }
+            }
+        }
+    ]
+}

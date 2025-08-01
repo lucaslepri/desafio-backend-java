@@ -1,0 +1,66 @@
+info:
+  app:
+    name: API de Financiamentos - Desafio Itaú
+    description: Uma API para gerenciamento de clientes e propostas de financiamento de veículos.
+    version: 1.0.0
+
+spring:
+  profiles:
+    active: dev
+  data:
+    mongodb:
+      database: testdb
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=10m
+    cache-names: customers
+
+logging:
+  level:
+    org.mongodb.driver: WARN
+    org.springframework: WARN
+    org.apache.catalina: WARN
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY:dGVzdC1zZWNyZXQta2V5LWZvci1qd3QtYXV0aGVudGljYXRpb24tMTIzNDU2Nzg5MA==}
+      expiration: 360000
+
+resilience4j.circuitbreaker:
+  instances:
+    receitaFederalService:
+      registerHealthIndicator: true
+      sliding-window-type: count-based
+      sliding-window-size: 10
+      failure-rate-threshold: 30
+      wait-duration-in-open-state: 5s
+      permitted-number-of-calls-in-half-open-state: 1
+      ignore-exceptions:
+        - com.itau.desafio.vendas.domain.exceptions.BusinessRuleException
+      record-exceptions:
+        - org.springframework.web.client.ResourceAccessException
+        - org.springframework.web.client.HttpServerErrorException
+        - java.util.concurrent.TimeoutException
+        - java.io.IOException
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 7.0.2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics,mappings,beans
+  endpoint:
+    health:
+      show-details: always
+
+services:
+  receita-federal:
+    url: ${RECEITA_FEDERAL_URL:http://localhost:8081/api/v1/cpf-validator/check}
+    timeout: 5000

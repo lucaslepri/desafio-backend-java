@@ -1,0 +1,66 @@
+@baseUrl = http://127.0.0.1:8080/proposals
+#@baseUrl = http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals
+@nonExistentId = 999999
+
+###
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+###
+# @name refresh
+POST {{baseUrl}}/actuator/refresh
+
+
+###
+# @name getCustomers
+GET {{baseUrl}}/api/v1/customers?page=0&size=10
+Authorization: Bearer {{authToken}}
+
+#
+@authToken = {{login.response.body.token}}
+
+###
+# @name createCustomer
+POST {{baseUrl}}/api/v1/customers
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "fullName": "Jorginho da Silva",
+  "cpf": "13398637078",
+  "phoneNumber": "73989713035",
+  "monthlyIncome": 5000.00
+}
+
+###
+# @name deleteCustomer
+DELETE {{baseUrl}}/api/v1/customers/{{customerId}}
+Authorization: Bearer {{authToken}}
+
+###
+# @name createCustomer
+PATCH {{baseUrl}}/api/v1/customers/{{createCustomer.response.body.id}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "fullName": "JABorginho da Silva",
+  "cpf": "83266875028",
+  "phoneNumber": "22987654321",
+  "monthlyIncome": 22100.00
+}
+
+###
+@customerId = {{createCustomer.response.body.id}}
+
+###
+# @name getCustomerById
+GET {{baseUrl}}/api/v1/customers/{{customerId}}
+Authorization: Bearer {{authToken}}
+

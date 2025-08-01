@@ -1,0 +1,74 @@
+name: Deploy ms-proposals to ECS
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'ms-proposals/**'
+      - '.github/workflows/deploy-proposals.yml'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-west-2
+  ECR_REPOSITORY: desafio-itau/ms-proposals
+  ECS_SERVICE: desafio-itau-ms-proposals-service
+  ECS_CLUSTER: desafio-itau-cluster
+  ECS_TASK_DEFINITION_FILE: aws/ecs/ms-proposals/ms-proposals-task-def.json
+  CONTAINER_NAME: ms-proposals-container
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 1. Checkout do código
+        uses: actions/checkout@v3
+
+      - name: 2. Configurar AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+#      - name: 2. Configurar AWS Credentials via Access Keys 
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ env.AWS_REGION }}
+          
+      - name: 3. Login no Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        
+      - name: 4. Build, Multi-tag e Push da imagem para o ECR
+        id: build-image
+        working-directory: ./ms-proposals
+        run: |
+          ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG=${{ github.sha }}
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push --all-tags $ECR_REGISTRY/$ECR_REPOSITORY
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: 5. Renderizar a nova Task Definition com a imagem atualizada
+        id: render-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION_FILE }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: 6. Deployar a Task Definition no Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: false

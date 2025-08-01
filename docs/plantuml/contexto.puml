@@ -1,0 +1,20 @@
+@startuml Contexto do Sistema de Vendas
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+title Diagrama de Contexto do Sistema
+
+Person(user, "Usuário", "Agente/Analista de Negócios que gerencia clientes e propostas.")
+Person(developer, "Desenvolvedor / SRE", "Responsável por manter, evoluir e operar o sistema.")
+
+System_Ext(receita_federal, "API da Receita Federal", "Sistema externo para validação de CPF.")
+System_Ext(github, "GitHub", "Repositório de código e motor de CI/CD.")
+
+System(vendas_system, "Sistema de Vendas de Financiamentos", "Plataforma para gerenciar propostas de financiamento de veículos, com auditoria de dados integrada.")
+
+Rel(user, vendas_system, "Usa para cadastrar, consultar, editar e excluir dados de clientes e propostas", "HTTPS/API REST")
+Rel(vendas_system, receita_federal, "Valida CPF do cliente", "HTTPS/API REST")
+Rel(developer, github, "Gerencia o código-fonte e configura os pipelines")
+Rel(github, vendas_system, "Realiza o deploy das aplicações via GitHub Actions")
+
+@enduml

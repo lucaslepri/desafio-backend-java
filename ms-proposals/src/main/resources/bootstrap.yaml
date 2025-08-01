@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: ms-proposals
+  cloud:
+    aws:
+      region:
+        static: us-west-2
+  config:
+    import:
+      - "optional:aws-parameterstore:/config/ms-proposals/"
+      - "optional:aws-secretsmanager:desafio-itau/jwt-key"
+      - "optional:aws-secretsmanager:desafio-itau/mongo-connection-uri"

@@ -1,0 +1,37 @@
+@startuml Componentes do ms-proposals
+
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+title Diagrama de Componentes - Microserviço 'ms-proposals'
+
+ContainerDb_Ext(mongo, "MongoDB Atlas", "Database")
+System_Ext(receita_federal, "API da Receita Federal")
+Person_Ext(user, "Usuário")
+
+Container_Boundary(c4, "Microserviço 'ms-proposals'") {
+
+    Component(api_layer, "API Layer (Adapter de Entrada)", "Spring MVC, Spring Security", "REST, tratamento de exceções, autenticação/autorização. Interface com o mundo externo.")
+    
+    Component(use_case_layer, "Application Layer", "Casos de Uso que orquestram a lógica de negócio.")
+    
+    Component(domain_model, "Domain Model", "Plain Java", "Entidades, Agregados e Value Objects. Contém as regras de negócio puras e invariantes.")
+    
+    System_Boundary(c5, "Adapters de Saída") {
+        Component(persistence_adapter, "Persistence Adapter", "Spring Data MongoDB", "Implementa a porta de repositório.")
+        Component(rest_adapter, "REST Client Adapter", "Spring RestTemplate, Resilience4j", "Implementa a porta de validação de CPF, chamando o serviço externo | Circuit Breaker.")
+    }
+    
+    Rel(user, api_layer, "Faz requisições", "HTTPS/REST")
+    
+    Rel(api_layer, use_case_layer, "Invoca")
+    
+    Rel(use_case_layer, domain_model, "Usa")
+    Rel(use_case_layer, persistence_adapter, "Usa (via Porta de Repositório)")
+    Rel(use_case_layer, rest_adapter, "Usa (via Porta de Validação de CPF)")
+
+    Rel_R(persistence_adapter, mongo, "Lê/Escreve dados", "Mongo Wire Protocol")
+    Rel_R(rest_adapter, receita_federal, "Valida CPF", "HTTPS")
+}
+
+@enduml

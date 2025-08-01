@@ -1,0 +1,33 @@
+@startuml Componentes do ms-auditoria
+
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v16.0/dist
+!includeurl AWSPuml/AWSCommon.puml
+!includeurl AWSPuml/Database/all.puml
+!includeurl AWSPuml/Storage/all.puml
+
+LAYOUT_WITH_LEGEND()
+title Diagrama de Componentes - Microserviço 'ms-auditoria'
+
+ContainerDb_Ext(mongo, "MongoDB Atlas", "Database", "Fonte dos eventos de mudança (Change Streams).", $sprite="Database/DocumentDB")
+Container_Ext(audit_bucket, "Bucket de Auditoria", "AWS S3", "Destino dos arquivos de auditoria.", $sprite="Storage/SimpleStorageServiceBucket")
+
+Container_Boundary(c1, "Microserviço 'ms-auditoria'") {
+
+    Component(listener, "MongoChangeStream Listener", "Spring Data MongoDB", "Adapter de Entrada. Ouve continuamente o Change Stream do MongoDB e converte os eventos brutos em um modelo de domínio (AuditEvent).")
+    
+    Component(use_case, "ProcessAuditEvent UseCase", "Java", "Coração da aplicação. Orquestra o processamento do evento: registra métricas e invoca a porta de exportação.")
+    
+    Component(domain_model, "Domain Model (AuditEvent)", "Java", "Value Object que representa um evento de auditoria de forma agnóstica à tecnologia.")
+    
+    Component(exporter, "S3AuditEvent Exporter", "AWS SDK for S3", "Adapter de Saída. Implementa a porta de exportação, formatando e salvando o evento de auditoria como um arquivo JSON no S3.")
+    
+    Rel(listener, use_case, "1. Invoca para processar o evento")
+    Rel(use_case, domain_model, "Usa")
+    Rel(use_case, exporter, "2. Invoca para exportar o evento", "via Porta de Saída")
+}
+
+Rel_U(mongo, listener, "Notifica sobre mudanças de dados", "Mongo Change Stream")
+Rel_R(exporter, audit_bucket, "3. Escreve arquivo .json", "HTTPS/AWS API")
+
+@enduml

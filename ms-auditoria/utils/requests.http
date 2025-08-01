@@ -1,0 +1,46 @@
+@baseUrl = http://localhost:8080
+@nonExistentId = 999999
+
+###
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+#
+@authToken = {{login.response.body.token}}
+
+###
+# @name createCustomer
+POST {{baseUrl}}/api/v1/customers
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "fullName": "Jorginho da Silva",
+  "cpf": "43991016877",
+  "phoneNumber": "11987654321",
+  "monthlyIncome": 5000.00
+}
+
+###
+@customerId = {{createCustomer.response.body.id}}
+
+###
+# @name getCustomerById
+GET {{baseUrl}}/api/v1/customers/{{customerId}}
+Authorization: Bearer {{authToken}}
+
+###
+# @name deleteCustomer
+DELETE {{baseUrl}}/api/v1/customers/{{customerId}}
+Authorization: Bearer {{authToken}}
+
+###
+# @name getCustomers
+GET {{baseUrl}}/api/v1/customers?page=0&size=10
+Authorization: Bearer {{authToken}}

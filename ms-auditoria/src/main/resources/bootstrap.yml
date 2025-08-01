@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: ms-audit
+  cloud:
+    aws:
+      region:
+        static: us-west-2
+  config:
+    import:
+      - "optional:aws-secretsmanager:desafio-itau/mongo-connection-uri"
+      - "optional:aws-parameterstore:/config/ms-audit/"

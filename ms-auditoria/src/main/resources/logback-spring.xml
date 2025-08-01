@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name" />
+
+    <appender name="CONSOLE_PLAIN" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [${springAppName:-},%X{AWS-XRAY-TRACE-ID:-}] %-5level [%thread] %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <version>[ignore]</version>
+                <level>level</level>
+                <thread>thread</thread>
+                <level_value>[ignore]</level_value>
+                <logger>logger</logger>
+                <message>message</message>
+                <stack_trace>stacktrace</stack_trace>
+            </fieldNames>
+            <mdc>
+                <includeMdcKeyName>AWS-XRAY-TRACE-ID</includeMdcKeyName>
+            </mdc>
+            <customFields>{"application":"${springAppName:-}"}</customFields>
+        </encoder>
+    </appender>
+
+    <springProfile name="prod | production">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_JSON" />
+        </root>
+        <logger name="org.springframework" level="WARN" />
+        <logger name="com.amazonaws" level="WARN" />
+        <logger name="io.github.resilience4j" level="WARN" />
+        <logger name="com.itau.desafio.vendas" level="INFO" />
+    </springProfile>
+
+    <springProfile name="dev | default">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_PLAIN" />
+        </root>
+        <logger name="org.springframework" level="WARN" />
+        <logger name="com.amazonaws" level="INFO" />
+        <logger name="com.itau.desafio.vendas" level="WARN" />
+    </springProfile>
+</configuration>
