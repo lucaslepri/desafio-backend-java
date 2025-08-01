@@ -3,7 +3,7 @@ name: Deploy ms-proposals to ECS
 on:
   push:
     branches:
-      - dev
+      - main
     paths:
       - 'ms-proposals/**'
       - '.github/workflows/deploy-proposals.yml'

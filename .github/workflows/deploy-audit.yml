@@ -3,7 +3,7 @@ name: Deploy ms-audit to ECS
 on:
   push:
     branches:
-      - dev
+      - main
     paths:
       - 'ms-auditoria/**'
       - '.github/workflows/deploy-audit.yml'
