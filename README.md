@@ -1,5 +1,4 @@
 # Desafio Técnico - Engenharia de Software
-
 ![Java](https://img.shields.io/badge/Java-21-blue.svg)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.4-brightgreen.svg)
 ![AWS](https://img.shields.io/badge/AWS-ECS%20|%20S3%20|%20ECR-orange.svg)
@@ -118,12 +117,15 @@ Exemplo de JSON de auditoria gerado pelo `ms-auditoria`:
 -   **Feature Toggle**: Há uma flag de configuração (`cpf.validator.provider`) gerenciada via **AWS Parameter Store** para trocar entre diferentes implementações da `CpfValidationStrategy` em hot.
 
 ### Observabilidade
-<br>
+
+Trace circuit breaker
 ![Contexto](/imgs/trace1.png)<br>
-![Contexto](/imgs/trace2.png)<br>
-![Contexto](/imgs/trace3.png)<br>
-![Contexto](/imgs/trace4.png)<br>
-![Contexto](/imgs/prometheus.png)<br>
+Detalhes do X-Ray
+![Contexto](/imgs/trace2.png)<br><br>
+Detalhes do X-Ray
+![Contexto](/imgs/trace3.png)<br><br>
+Quantidade de clientes criados
+![Contexto](/imgs/prometheus.png)<br><br>
 
 ## Tecnologias e Padrões
 
