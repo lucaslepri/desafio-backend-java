@@ -6,7 +6,7 @@
 ![Terraform](https://img.shields.io/badge/Terraform-IaC-blueviolet.svg)
 ![CD](https://img.shields.io/badge/CI/CD-GitHub%20Actions-lightgrey.svg)
 
-Proposta de implementação do desafio técnico para engenheiros de Software.
+Uma proposta de implementação do desafio técnico para engenheiros de Software.
 
 
 O negócio escolhido foi o de venda de veículos financiados.
