@@ -23,6 +23,7 @@ Para isto, idealizei um sistema de gerenciamento de propostas de financiamento d
 - [Diferenciais Implementados](#diferenciais-implementados)
 - [Tecnologias e Padrões](#tecnologias-e-padrões)
 - [Reflexões, melhorias e gaps](#reflexões-melhorias-e-gaps)
+- [Links](#links)
 
 ## Visão Geral da Solução
 
@@ -143,3 +144,9 @@ A proposta nesta entrega é uma alternativa low cost, que poderia evoluir para u
 
 - ainda sobre o ms-auditoria: É nítido e necessário o desacoplamento entre a escuta e a persistência das mudanças .
 Outra alternativa seria a "notificação" das alterações saírem dos próprios microserviços que são resposáveis, mas com o trade-offs de acomplamento, extrapolamento da responsabilidade do ms-proposal, e risco de gravar mudanças que não foram efetivamente persistidas.
+
+
+### Links:
+Swagger [http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/swagger-ui/index.html](http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/swagger-ui/index.html)<br>
+Prometheus [http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/actuator/prometheus](http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com)<br>
+Health [http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/actuator/health](http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/actuator/health)
