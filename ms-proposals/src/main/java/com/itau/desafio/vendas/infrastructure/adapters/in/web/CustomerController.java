@@ -63,7 +63,7 @@ public class CustomerController {
 
     @GetMapping
     @Operation(summary = "Lista todos os clientes")
-    @IsAdminOrBusinessAgent
+    @IsAdminOrBusinessAnalyst
     public ResponseEntity<PageResponse<CustomerResponse>> listCustomers(Pageable pageable) {
         PageQuery query = new PageQuery(pageable.getPageNumber(), pageable.getPageSize());
 
