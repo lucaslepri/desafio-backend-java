@@ -148,5 +148,5 @@ Outra alternativa seria a "notificação" das alterações saírem dos próprios
 
 ### Links:
 Swagger [http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/swagger-ui/index.html](http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/swagger-ui/index.html)<br>
-Prometheus [http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/actuator/prometheus](http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com)<br>
+Prometheus [http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/actuator/prometheus](http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/actuator/prometheus)<br>
 Health [http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/actuator/health](http://desafio-itau-alb-889643146.us-west-2.elb.amazonaws.com/proposals/actuator/health)
